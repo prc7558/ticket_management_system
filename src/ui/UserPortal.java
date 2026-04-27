@@ -16,11 +16,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * User Portal with 4 panels:
- * 1. Raise Complaint
- * 2. My Tickets
- * 3. Track Status (auto-refresh)
- * 4. Edit Profile
+ * User Portal with 4 tabs:
+ * 1. Raise Complaint 2. My Tickets 3. Track Status 4. Edit Profile
  */
 public class UserPortal extends JFrame {
 
@@ -56,22 +53,23 @@ public class UserPortal extends JFrame {
         JPanel topBar = new JPanel(new BorderLayout());
         topBar.setBackground(ThemeConstants.BG_PANEL);
         topBar.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createMatteBorder(0, 0, 1, 0, ThemeConstants.BORDER_COLOR),
-            BorderFactory.createEmptyBorder(12, 20, 12, 20)
-        ));
+                BorderFactory.createMatteBorder(0, 0, 1, 0, ThemeConstants.BORDER_COLOR),
+                BorderFactory.createEmptyBorder(14, 24, 14, 24)));
 
-        JLabel titleLbl = ThemeConstants.createLabel("👤 User Portal", ThemeConstants.FONT_SUBTITLE, ThemeConstants.TEXT_PRIMARY);
-        JLabel userLbl = ThemeConstants.createLabel("Welcome, " + currentUser.getName(), ThemeConstants.FONT_BODY, ThemeConstants.TEXT_SECONDARY);
+        JLabel titleLbl = ThemeConstants.createLabel("👤  User Portal", ThemeConstants.FONT_SUBTITLE,
+                ThemeConstants.TEXT_PRIMARY);
+        JLabel userLbl = ThemeConstants.createLabel("  |  Welcome, " + currentUser.getName(), ThemeConstants.FONT_BODY,
+                ThemeConstants.TEXT_SECONDARY);
 
         JButton logoutBtn = ThemeConstants.createStyledButton("Logout", ThemeConstants.ACCENT_RED);
-        logoutBtn.setPreferredSize(new Dimension(100, 34));
+        logoutBtn.setPreferredSize(new Dimension(110, 36));
         logoutBtn.addActionListener(e -> {
             stopAutoRefresh();
             dispose();
             new LoginFrame().setVisible(true);
         });
 
-        JPanel leftTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        JPanel leftTop = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
         leftTop.setOpaque(false);
         leftTop.add(titleLbl);
         leftTop.add(userLbl);
@@ -80,72 +78,80 @@ public class UserPortal extends JFrame {
         topBar.add(logoutBtn, BorderLayout.EAST);
 
         // ── Tabbed Pane ──
-        tabbedPane = new JTabbedPane();
+        tabbedPane = new JTabbedPane(JTabbedPane.TOP);
         tabbedPane.setBackground(ThemeConstants.BG_DARK);
-        tabbedPane.setForeground(ThemeConstants.TEXT_PRIMARY);
+        tabbedPane.setForeground(ThemeConstants.TEXT_SECONDARY);
         tabbedPane.setFont(ThemeConstants.FONT_HEADING);
+        tabbedPane.setOpaque(true);
 
-        tabbedPane.addTab("📝 Raise Complaint", createRaiseComplaintPanel());
-        tabbedPane.addTab("🎫 My Tickets", createMyTicketsPanel());
-        tabbedPane.addTab("📊 Track Status", createTrackStatusPanel());
-        tabbedPane.addTab("⚙ Edit Profile", createEditProfilePanel());
+        tabbedPane.addTab("📝  Raise Complaint", createRaiseComplaintPanel());
+        tabbedPane.addTab("🎫  My Tickets", createMyTicketsPanel());
+        tabbedPane.addTab("📊  Track Status", createTrackStatusPanel());
+        tabbedPane.addTab("⚙  Edit Profile", createEditProfilePanel());
 
         mainPanel.add(topBar, BorderLayout.NORTH);
         mainPanel.add(tabbedPane, BorderLayout.CENTER);
         setContentPane(mainPanel);
     }
 
-    // ════════════════════════════════════════════
-    // TAB 1: Raise Complaint
-    // ════════════════════════════════════════════
+    // ════════════════════════════════════════════════════════════════════
+    // TAB 1 — Raise Complaint
+    // ════════════════════════════════════════════════════════════════════
     private JPanel createRaiseComplaintPanel() {
         JPanel outer = new JPanel(new GridBagLayout());
         outer.setBackground(ThemeConstants.BG_DARK);
 
         JPanel card = ThemeConstants.createCardPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setPreferredSize(new Dimension(500, 520));
+        card.setPreferredSize(new Dimension(520, 540));
 
-        JLabel heading = ThemeConstants.createLabel("Raise a New Complaint", ThemeConstants.FONT_SUBTITLE, ThemeConstants.TEXT_PRIMARY);
+        JLabel heading = ThemeConstants.createLabel("Raise a New Complaint", ThemeConstants.FONT_SUBTITLE,
+                ThemeConstants.TEXT_PRIMARY);
         heading.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel titleLbl = ThemeConstants.createLabel("Title", ThemeConstants.FONT_HEADING, ThemeConstants.TEXT_SECONDARY);
+        JLabel titleLbl = ThemeConstants.createLabel("Title", ThemeConstants.FONT_HEADING,
+                ThemeConstants.TEXT_SECONDARY);
         titleLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
         JTextField titleField = ThemeConstants.createStyledTextField(30);
-        titleField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        titleField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         titleField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel catLbl = ThemeConstants.createLabel("Category", ThemeConstants.FONT_HEADING, ThemeConstants.TEXT_SECONDARY);
+        JLabel catLbl = ThemeConstants.createLabel("Category", ThemeConstants.FONT_HEADING,
+                ThemeConstants.TEXT_SECONDARY);
         catLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
-        String[] categories = {"General", "Technical", "Billing", "Service", "Lost Item", "Found Item", "Anonymous Feedback", "Other"};
+        String[] categories = { "General", "Technical", "Billing", "Service", "Lost Item", "Found Item",
+                "Anonymous Feedback", "Other" };
         JComboBox<String> catBox = ThemeConstants.createStyledComboBox(categories);
-        catBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        catBox.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         catBox.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        // Anonymous checkbox (inspired by campus-issue CIRS)
+        // Anonymous checkbox
         JCheckBox anonBox = new JCheckBox("Submit anonymously (your name won't be visible to admins)");
-        anonBox.setOpaque(false);
+        anonBox.setBackground(ThemeConstants.BG_CARD); // card background so it matches
         anonBox.setForeground(ThemeConstants.TEXT_SECONDARY);
         anonBox.setFont(ThemeConstants.FONT_SMALL);
         anonBox.setAlignmentX(Component.LEFT_ALIGNMENT);
+        anonBox.setFocusPainted(false);
 
-        // Auto-check anonymous when "Anonymous Feedback" is selected
         catBox.addActionListener(ev -> {
-            if ("Anonymous Feedback".equals(catBox.getSelectedItem())) {
+            if ("Anonymous Feedback".equals(catBox.getSelectedItem()))
                 anonBox.setSelected(true);
-            }
         });
 
-        JLabel descLbl = ThemeConstants.createLabel("Description", ThemeConstants.FONT_HEADING, ThemeConstants.TEXT_SECONDARY);
+        JLabel descLbl = ThemeConstants.createLabel("Description", ThemeConstants.FONT_HEADING,
+                ThemeConstants.TEXT_SECONDARY);
         descLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
+
         JTextArea descArea = ThemeConstants.createStyledTextArea(6, 30);
         JScrollPane descScroll = new JScrollPane(descArea);
         descScroll.setAlignmentX(Component.LEFT_ALIGNMENT);
-        descScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 160));
+        descScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 170));
+        descScroll.setBackground(ThemeConstants.BG_INPUT);
+        descScroll.getViewport().setBackground(ThemeConstants.BG_INPUT);
         descScroll.setBorder(BorderFactory.createLineBorder(ThemeConstants.BORDER_COLOR, 1));
 
         JButton submitBtn = ThemeConstants.createStyledButton("Submit Complaint", ThemeConstants.ACCENT_GREEN);
-        submitBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        submitBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
         submitBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel resultLbl = ThemeConstants.createLabel(" ", ThemeConstants.FONT_SMALL, ThemeConstants.ACCENT_GREEN);
@@ -177,14 +183,20 @@ public class UserPortal extends JFrame {
 
         card.add(heading);
         card.add(Box.createVerticalStrut(20));
-        card.add(titleLbl); card.add(Box.createVerticalStrut(4)); card.add(titleField);
-        card.add(Box.createVerticalStrut(14));
-        card.add(catLbl); card.add(Box.createVerticalStrut(4)); card.add(catBox);
+        card.add(titleLbl);
+        card.add(Box.createVerticalStrut(5));
+        card.add(titleField);
+        card.add(Box.createVerticalStrut(16));
+        card.add(catLbl);
+        card.add(Box.createVerticalStrut(5));
+        card.add(catBox);
         card.add(Box.createVerticalStrut(10));
         card.add(anonBox);
-        card.add(Box.createVerticalStrut(14));
-        card.add(descLbl); card.add(Box.createVerticalStrut(4)); card.add(descScroll);
         card.add(Box.createVerticalStrut(16));
+        card.add(descLbl);
+        card.add(Box.createVerticalStrut(5));
+        card.add(descScroll);
+        card.add(Box.createVerticalStrut(18));
         card.add(submitBtn);
         card.add(Box.createVerticalStrut(8));
         card.add(resultLbl);
@@ -193,17 +205,20 @@ public class UserPortal extends JFrame {
         return outer;
     }
 
-    // ════════════════════════════════════════════
-    // TAB 2: My Tickets
-    // ════════════════════════════════════════════
+    // ════════════════════════════════════════════════════════════════════
+    // TAB 2 — My Tickets
+    // ════════════════════════════════════════════════════════════════════
     private JPanel createMyTicketsPanel() {
-        JPanel panel = new JPanel(new BorderLayout(0, 10));
+        JPanel panel = new JPanel(new BorderLayout(0, 12));
         panel.setBackground(ThemeConstants.BG_DARK);
-        panel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 18, 18, 18));
 
-        String[] cols = {"ID", "Title", "Category", "Priority", "Status", "Created", "SLA Deadline"};
+        String[] cols = { "ID", "Title", "Category", "Priority", "Status", "Created", "SLA Deadline" };
         ticketTableModel = new DefaultTableModel(cols, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+            @Override
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
         ticketTable = new JTable(ticketTableModel);
         ticketTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -213,9 +228,9 @@ public class UserPortal extends JFrame {
             @Override
             public Component getTableCellRendererComponent(JTable t, Object v, boolean sel, boolean foc, int r, int c) {
                 Component comp = super.getTableCellRendererComponent(t, v, sel, foc, r, c);
-                if (!sel && v != null) comp.setForeground(ThemeConstants.getPriorityColor(v.toString()));
-                else if (sel) comp.setForeground(Color.WHITE);
-                comp.setBackground(sel ? ThemeConstants.ACCENT_BLUE.darker() : ThemeConstants.BG_CARD);
+                comp.setBackground(sel ? new Color(60, 80, 160) : ThemeConstants.BG_CARD);
+                comp.setForeground(sel ? Color.WHITE
+                        : (v != null ? ThemeConstants.getPriorityColor(v.toString()) : ThemeConstants.TEXT_SECONDARY));
                 return comp;
             }
         });
@@ -224,9 +239,9 @@ public class UserPortal extends JFrame {
             @Override
             public Component getTableCellRendererComponent(JTable t, Object v, boolean sel, boolean foc, int r, int c) {
                 Component comp = super.getTableCellRendererComponent(t, v, sel, foc, r, c);
-                if (!sel && v != null) comp.setForeground(ThemeConstants.getStatusColor(v.toString()));
-                else if (sel) comp.setForeground(Color.WHITE);
-                comp.setBackground(sel ? ThemeConstants.ACCENT_BLUE.darker() : ThemeConstants.BG_CARD);
+                comp.setBackground(sel ? new Color(60, 80, 160) : ThemeConstants.BG_CARD);
+                comp.setForeground(sel ? Color.WHITE
+                        : (v != null ? ThemeConstants.getStatusColor(v.toString()) : ThemeConstants.TEXT_SECONDARY));
                 return comp;
             }
         });
@@ -234,12 +249,12 @@ public class UserPortal extends JFrame {
         JScrollPane sp = ThemeConstants.createStyledScrollPane(ticketTable);
 
         JButton refreshBtn = ThemeConstants.createStyledButton("Refresh", ThemeConstants.ACCENT_BLUE);
+        refreshBtn.setPreferredSize(new Dimension(110, 38));
         refreshBtn.addActionListener(e -> refreshTicketTable());
 
-        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel top = new JPanel(new FlowLayout(FlowLayout.LEFT, 12, 0));
         top.setOpaque(false);
         top.add(ThemeConstants.createLabel("My Tickets", ThemeConstants.FONT_SUBTITLE, ThemeConstants.TEXT_PRIMARY));
-        top.add(Box.createHorizontalStrut(20));
         top.add(refreshBtn);
 
         panel.add(top, BorderLayout.NORTH);
@@ -255,20 +270,21 @@ public class UserPortal extends JFrame {
             protected List<Ticket> doInBackground() {
                 return service.getUserTickets(currentUser.getId());
             }
+
             @Override
             protected void done() {
                 try {
                     List<Ticket> tickets = get();
                     ticketTableModel.setRowCount(0);
                     for (Ticket t : tickets) {
-                        ticketTableModel.addRow(new Object[]{
-                            t.getId(),
-                            t.getComplaintTitle(),
-                            t.getComplaintCategory(),
-                            t.getPriority(),
-                            t.getStatus().name(),
-                            t.getCreatedAt() != null ? t.getCreatedAt().toString().substring(0, 16) : "",
-                            t.getSlaDeadline() != null ? t.getSlaDeadline().toString().substring(0, 16) : "N/A"
+                        ticketTableModel.addRow(new Object[] {
+                                t.getId(),
+                                t.getComplaintTitle(),
+                                t.getComplaintCategory(),
+                                t.getPriority(),
+                                t.getStatus().name(),
+                                t.getCreatedAt() != null ? t.getCreatedAt().toString().substring(0, 16) : "",
+                                t.getSlaDeadline() != null ? t.getSlaDeadline().toString().substring(0, 16) : "N/A"
                         });
                     }
                 } catch (Exception ex) {
@@ -279,16 +295,16 @@ public class UserPortal extends JFrame {
         worker.execute();
     }
 
-    // ════════════════════════════════════════════
-    // TAB 3: Track Status
-    // ════════════════════════════════════════════
+    // ════════════════════════════════════════════════════════════════════
+    // TAB 3 — Track Status
+    // ════════════════════════════════════════════════════════════════════
     private JPanel createTrackStatusPanel() {
-        JPanel panel = new JPanel(new BorderLayout(0, 10));
+        JPanel panel = new JPanel(new BorderLayout(0, 12));
         panel.setBackground(ThemeConstants.BG_DARK);
-        panel.setBorder(BorderFactory.createEmptyBorder(16, 16, 16, 16));
+        panel.setBorder(BorderFactory.createEmptyBorder(18, 18, 18, 18));
 
-        // Stats cards at top
-        JPanel statsPanel = new JPanel(new GridLayout(1, 4, 12, 0));
+        // Stat cards
+        JPanel statsPanel = new JPanel(new GridLayout(1, 4, 14, 0));
         statsPanel.setOpaque(false);
 
         JLabel totalLbl = createStatCard("Total", "0", ThemeConstants.ACCENT_BLUE);
@@ -301,17 +317,23 @@ public class UserPortal extends JFrame {
         statsPanel.add(progressLbl.getParent());
         statsPanel.add(resolvedLbl.getParent());
 
-        JLabel refreshInfo = ThemeConstants.createLabel("Auto-refreshes every 30 seconds", ThemeConstants.FONT_SMALL, ThemeConstants.TEXT_MUTED);
+        JLabel refreshInfo = ThemeConstants.createLabel(
+                "  Auto-refreshes every 30 seconds", ThemeConstants.FONT_SMALL, ThemeConstants.TEXT_MUTED);
 
-        JPanel topP = new JPanel(new BorderLayout());
+        JPanel topP = new JPanel(new BorderLayout(0, 8));
         topP.setOpaque(false);
+        topP.add(ThemeConstants.createLabel("Ticket Status Overview",
+                ThemeConstants.FONT_SUBTITLE, ThemeConstants.TEXT_PRIMARY), BorderLayout.NORTH);
         topP.add(statsPanel, BorderLayout.CENTER);
         topP.add(refreshInfo, BorderLayout.SOUTH);
 
-        // Detail area
+        // Detail text area
         JTextArea detailArea = ThemeConstants.createStyledTextArea(15, 40);
         detailArea.setEditable(false);
+        detailArea.setBackground(ThemeConstants.BG_CARD);
         JScrollPane detailScroll = new JScrollPane(detailArea);
+        detailScroll.setBackground(ThemeConstants.BG_CARD);
+        detailScroll.getViewport().setBackground(ThemeConstants.BG_CARD);
         detailScroll.setBorder(BorderFactory.createLineBorder(ThemeConstants.BORDER_COLOR, 1));
 
         panel.add(topP, BorderLayout.NORTH);
@@ -320,7 +342,7 @@ public class UserPortal extends JFrame {
         // Update function
         Runnable updateStats = () -> {
             List<Ticket> tickets = service.getUserTickets(currentUser.getId());
-            int[] counts = {0, 0, 0}; // open, inProg, resolved
+            int[] counts = { 0, 0, 0 }; // open, inProg, resolved
             StringBuilder sb = new StringBuilder();
             for (Ticket t : tickets) {
                 switch (t.getStatus()) {
@@ -329,12 +351,13 @@ public class UserPortal extends JFrame {
                     case RESOLVED, CLOSED -> counts[2]++;
                 }
                 sb.append("Ticket #").append(t.getId())
-                  .append("  |  ").append(t.getComplaintTitle())
-                  .append("  |  Priority: ").append(t.getPriority())
-                  .append("  |  Status: ").append(t.getStatus())
-                  .append("  |  SLA: ").append(t.getSlaDeadline() != null ? t.getSlaDeadline().toString().substring(0, 16) : "N/A")
-                  .append(t.isOverdue() ? "  ⚠ OVERDUE" : "")
-                  .append("\n");
+                        .append("  |  ").append(t.getComplaintTitle())
+                        .append("  |  Priority: ").append(t.getPriority())
+                        .append("  |  Status: ").append(t.getStatus())
+                        .append("  |  SLA: ")
+                        .append(t.getSlaDeadline() != null ? t.getSlaDeadline().toString().substring(0, 16) : "N/A")
+                        .append(t.isOverdue() ? "  ⚠ OVERDUE" : "")
+                        .append("\n");
             }
             final int total = tickets.size();
             final int openCount = counts[0];
@@ -350,18 +373,15 @@ public class UserPortal extends JFrame {
             });
         };
 
-        // Initial load
         SwingUtilities.invokeLater(() -> new Thread(updateStats).start());
-
-        // Store updater for auto-refresh
         panel.putClientProperty("updater", updateStats);
-
         return panel;
     }
 
     private JLabel createStatCard(String title, String value, Color color) {
         JPanel card = ThemeConstants.createCardPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setPreferredSize(new Dimension(180, 90));
 
         JLabel valueLbl = ThemeConstants.createLabel(value, ThemeConstants.FONT_TITLE, color);
         valueLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -378,35 +398,41 @@ public class UserPortal extends JFrame {
         return valueLbl;
     }
 
-    // ════════════════════════════════════════════
-    // TAB 4: Edit Profile
-    // ════════════════════════════════════════════
+    // ════════════════════════════════════════════════════════════════════
+    // TAB 4 — Edit Profile
+    // ════════════════════════════════════════════════════════════════════
     private JPanel createEditProfilePanel() {
         JPanel outer = new JPanel(new GridBagLayout());
         outer.setBackground(ThemeConstants.BG_DARK);
 
         JPanel card = ThemeConstants.createCardPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
-        card.setPreferredSize(new Dimension(420, 360));
+        card.setPreferredSize(new Dimension(440, 380));
 
-        JLabel heading = ThemeConstants.createLabel("Edit Profile", ThemeConstants.FONT_SUBTITLE, ThemeConstants.TEXT_PRIMARY);
+        JLabel heading = ThemeConstants.createLabel("Edit Profile", ThemeConstants.FONT_SUBTITLE,
+                ThemeConstants.TEXT_PRIMARY);
         heading.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel roleLbl = ThemeConstants.createLabel(
+                "Role: " + currentUser.getRole().name(), ThemeConstants.FONT_SMALL, ThemeConstants.TEXT_MUTED);
+        roleLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel nameLbl = ThemeConstants.createLabel("Name", ThemeConstants.FONT_HEADING, ThemeConstants.TEXT_SECONDARY);
         nameLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
         JTextField nameField = ThemeConstants.createStyledTextField(25);
         nameField.setText(currentUser.getName());
-        nameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        nameField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         nameField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JLabel pwLbl = ThemeConstants.createLabel("New Password (leave blank to keep)", ThemeConstants.FONT_HEADING, ThemeConstants.TEXT_SECONDARY);
+        JLabel pwLbl = ThemeConstants.createLabel("New Password (leave blank to keep)", ThemeConstants.FONT_HEADING,
+                ThemeConstants.TEXT_SECONDARY);
         pwLbl.setAlignmentX(Component.LEFT_ALIGNMENT);
         JPasswordField pwField = ThemeConstants.createStyledPasswordField(25);
-        pwField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        pwField.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         pwField.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JButton saveBtn = ThemeConstants.createStyledButton("Save Changes", ThemeConstants.ACCENT_BLUE);
-        saveBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        saveBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 44));
         saveBtn.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JLabel resultLbl = ThemeConstants.createLabel(" ", ThemeConstants.FONT_SMALL, ThemeConstants.ACCENT_GREEN);
@@ -435,11 +461,17 @@ public class UserPortal extends JFrame {
         });
 
         card.add(heading);
-        card.add(Box.createVerticalStrut(20));
-        card.add(nameLbl); card.add(Box.createVerticalStrut(4)); card.add(nameField);
-        card.add(Box.createVerticalStrut(14));
-        card.add(pwLbl); card.add(Box.createVerticalStrut(4)); card.add(pwField);
-        card.add(Box.createVerticalStrut(20));
+        card.add(Box.createVerticalStrut(4));
+        card.add(roleLbl);
+        card.add(Box.createVerticalStrut(22));
+        card.add(nameLbl);
+        card.add(Box.createVerticalStrut(5));
+        card.add(nameField);
+        card.add(Box.createVerticalStrut(16));
+        card.add(pwLbl);
+        card.add(Box.createVerticalStrut(5));
+        card.add(pwField);
+        card.add(Box.createVerticalStrut(22));
         card.add(saveBtn);
         card.add(Box.createVerticalStrut(8));
         card.add(resultLbl);
@@ -458,19 +490,18 @@ public class UserPortal extends JFrame {
         refreshScheduler.scheduleAtFixedRate(() -> {
             if (isVisible()) {
                 refreshTicketTable();
-                // Refresh track status tab
                 Component tab = tabbedPane.getComponentAt(2);
                 if (tab instanceof JPanel p) {
                     Object updater = p.getClientProperty("updater");
-                    if (updater instanceof Runnable r) r.run();
+                    if (updater instanceof Runnable r)
+                        r.run();
                 }
             }
         }, 30, 30, TimeUnit.SECONDS);
     }
 
     private void stopAutoRefresh() {
-        if (refreshScheduler != null) {
+        if (refreshScheduler != null)
             refreshScheduler.shutdown();
-        }
     }
 }
