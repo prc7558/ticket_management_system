@@ -1,0 +1,4 @@
+Manifest-Version: 1.0
+Main-Class: ui.LoginFrame
+Class-Path: lib/mysql-connector-j-8.3.0.jar
+Created-By: Complaint & Ticket Management System
